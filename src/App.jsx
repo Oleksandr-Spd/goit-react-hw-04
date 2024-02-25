@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 
 import { getImages } from "./Components/Api";
-import { SearchBar } from "./Components/SearchBar/SearchBAr";
+import { SearchBar } from "./Components/SearchBar/SearchBar";
 import { ImageGallery } from "./Components/ImageGallery/ImageGallery";
 import { LoadMore } from "./Components/Button/Button";
 
