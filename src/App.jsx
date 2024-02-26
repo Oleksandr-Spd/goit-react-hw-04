@@ -42,15 +42,16 @@ export const App = () => {
         );
         setImages((prevImages) => [...prevImages, ...results]);
         setTotalPage(total_pages);
-        if (!searchClick && total > 0) {
+        if (!searchClick) {
           toast.success(`Hooray! We found ${total} images.`);
           setSearchClick(true);
-        } else {
-          toast.error(
-            `Sorry, but we couldn't find any images based on your request. Try again.`
-          );
-          setSearchClick(true);
         }
+        // else {
+        //   toast.error(
+        //     `Sorry, but we couldn't find any images based on your request. Try again.`
+        //   );
+        //   setSearchClick(true);
+        // }
       } catch (error) {
         setError(true);
       } finally {
@@ -80,6 +81,7 @@ export const App = () => {
   const openModal = (largeImageUrl) => {
     setModalImageUrl(largeImageUrl);
     setIsOpen(true);
+    console.log(largeImageUrl);
   };
   const closeModal = () => {
     setIsOpen(false);

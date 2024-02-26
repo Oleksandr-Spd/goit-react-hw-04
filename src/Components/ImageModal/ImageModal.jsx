@@ -20,9 +20,7 @@ export const ModalWindow = ({ isOpen, onClose, imageUrl }) => {
       contentLabel="Image Modal"
     >
       <div>
-        <h2>Modal Content</h2>
-        <img alt="" src={imageUrl} />
-        <button onClick={onClose}>Close Modal</button>
+        <img alt={imageUrl.alt_description} src={imageUrl} />
       </div>
     </Modal>
   );
