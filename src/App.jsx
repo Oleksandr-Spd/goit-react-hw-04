@@ -6,12 +6,13 @@ import toast, { Toaster } from "react-hot-toast";
 import { getImages } from "./Components/Api";
 import { SearchBar } from "./Components/SearchBar/SearchBar";
 import { ImageGallery } from "./Components/ImageGallery/ImageGallery";
-import { LoadMore } from "./Components/Button/Button";
+import { LoadMore } from "./Components/LoadMoreBtn/LoadMoreBtn";
 
 import { Loader } from "./Components/Loader/Loader";
 import { GalleryWarning } from "./Components/GalleryWarning/GalleryWarning";
 import { Error } from "./Components/Error/Error";
 import { ModalWindow } from "./Components/ImageModal/ImageModal";
+import { nanoid } from "nanoid";
 
 export const App = () => {
   const [query, setQuery] = useState("");
@@ -24,7 +25,7 @@ export const App = () => {
   const [totalPage, setTotalPage] = useState(0);
 
   const [modalIsOpen, setIsOpen] = useState(false);
-  const [modalImageUrl, setModalImageUrl] = useState("");
+  const [selectedImg, setSelectedImg] = useState("");
 
   useEffect(() => {
     if (!query) {
@@ -35,7 +36,6 @@ export const App = () => {
     setSearchClick(true);
     async function fetchData() {
       try {
-        setError(false);
         const { results, total, total_pages } = await getImages(
           query.split("/")[1],
           page
@@ -43,32 +43,25 @@ export const App = () => {
         setImages((prevImages) => [...prevImages, ...results]);
         setTotalPage(total_pages);
         if (!searchClick) {
-          toast.success(`Hooray! We found ${total} images.`);
+          if (total === 0) {
+            toast(`Oops! Your search returned 0 results.`);
+          } else {
+            toast.success(`Hooray! We found ${total} images.`);
+          }
           setSearchClick(true);
         }
-        // else {
-        //   toast.error(
-        //     `Sorry, but we couldn't find any images based on your request. Try again.`
-        //   );
-        //   setSearchClick(true);
-        // }
       } catch (error) {
-        setError(true);
+        setError(error.message);
       } finally {
-        clearTimeout(timeoutId);
         setLoading(false);
       }
     }
-
-    const timeoutId = setTimeout(() => {
-      setLoading(false);
-    }, 3000);
 
     fetchData();
   }, [query, page]);
 
   const handleSubmit = (query) => {
-    setQuery(`${Date.now()}/${query}`);
+    setQuery(`${nanoid()}/${query}`);
     setPage(1);
     setImages([]);
     setSearchClick(false);
@@ -78,10 +71,10 @@ export const App = () => {
     setPage((prev) => prev + 1);
   };
 
-  const openModal = (largeImageUrl) => {
-    setModalImageUrl(largeImageUrl);
+  const openModal = (images) => {
+    setSelectedImg(images);
     setIsOpen(true);
-    console.log(largeImageUrl);
+    console.log(selectedImg);
   };
   const closeModal = () => {
     setIsOpen(false);
@@ -91,7 +84,9 @@ export const App = () => {
     <div>
       <SearchBar onSearch={handleSubmit} />
       {error && <Error />}
-      {images.length === 0 && !loading && !error && <GalleryWarning />}
+      {images.length === 0 && !loading && !error && (
+        <GalleryWarning query={query} />
+      )}
       {images.length > 0 && (
         <ImageGallery items={images} openModal={openModal} />
       )}
@@ -104,7 +99,8 @@ export const App = () => {
         <ModalWindow
           isOpen={modalIsOpen}
           onClose={closeModal}
-          imageUrl={modalImageUrl}
+          imageUrl={selectedImg.urls.regular}
+          imageAlt={selectedImg.alt_description}
         />
       )}
     </div>

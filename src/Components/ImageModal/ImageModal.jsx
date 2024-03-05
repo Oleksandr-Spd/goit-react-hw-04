@@ -11,7 +11,7 @@ const customStyles = {
   },
 };
 
-export const ModalWindow = ({ isOpen, onClose, imageUrl }) => {
+export const ModalWindow = ({ isOpen, onClose, imageUrl, imageAlt }) => {
   return (
     <Modal
       isOpen={isOpen}
@@ -20,7 +20,7 @@ export const ModalWindow = ({ isOpen, onClose, imageUrl }) => {
       contentLabel="Image Modal"
     >
       <div>
-        <img alt={imageUrl.alt_description} src={imageUrl} />
+        <img alt={imageAlt} src={imageUrl} />
       </div>
     </Modal>
   );
